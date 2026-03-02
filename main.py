@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 OLLAMA_URL   = os.environ.get("OLLAMA_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "tinyllama")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2:0.5b")
 RESUME_PATH  = Path(__file__).parent / "resume.txt"
 
 SYSTEM_PROMPT = """You are Ishrak's personal AI assistant on his portfolio website.
