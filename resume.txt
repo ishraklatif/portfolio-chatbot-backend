@@ -1,0 +1,19 @@
+REPLACE THIS WITH YOUR ACTUAL RESUME AS PLAIN TEXT
+
+Ishrak Latif
+ishrak.latif96@gmail.com
+github.com/ishraklatif
+linkedin.com/in/ishrak-latif-a79235212
+
+EXPERIENCE
+Software Engineer — Dhaka National Medical Institute Hospital (2023–present)
+- ...
+
+EDUCATION
+...
+
+SKILLS
+Python, PyTorch, FastAPI, Django, OpenCV, ...
+
+PROJECTS
+StockPred — TFT-based ASX stock forecasting pipeline ...
