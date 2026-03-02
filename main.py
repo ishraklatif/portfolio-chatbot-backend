@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 HF_TOKEN = os.environ["HF_TOKEN"]
-HF_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"
 HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}/v1/chat/completions"
 RESUME_PATH = Path(__file__).parent / "resume.txt"
 
@@ -27,7 +27,7 @@ You have access to his resume as context. Answer questions about his skills, exp
 projects, and background accurately and concisely. For general questions answer like a
 helpful AI assistant. Be friendly and professional. Keep responses concise (2-4 sentences
 unless more is clearly needed). If asked something you don't know, say so honestly.
-Do not include any <think> reasoning tags in your response, just answer directly."""
+"""
 
 # ── Resume chunking ───────────────────────────────────────────────────────────
 def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list[str]:
@@ -124,4 +124,5 @@ async def chat(req: ChatRequest):
         raise HTTPException(status_code=502, detail=f"HuggingFace error: {str(e)}")
 
     return ChatResponse(reply=reply)
+
 
