@@ -4,7 +4,7 @@ import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 from pathlib import Path
 
 app = FastAPI(title="Ishrak's Portfolio Chatbot")
@@ -27,6 +27,7 @@ projects, and background accurately and concisely. For general questions answer 
 helpful AI assistant. Be friendly and professional. Keep responses concise (2-4 sentences
 unless more is clearly needed). If asked something you don't know, say so honestly."""
 
+# ── Resume chunking ───────────────────────────────────────────────────────────
 def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list[str]:
     if not path.exists():
         return ["Resume not loaded. Please add resume.txt to the backend folder."]
@@ -38,22 +39,25 @@ def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list
         i += chunk_size - overlap
     return chunks
 
+# ── Embeddings (fastembed — no PyTorch, ~50MB model) ─────────────────────────
 print("Loading embedding model...")
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+embedder = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
 CHUNKS = load_and_chunk(RESUME_PATH)
 print(f"Loaded {len(CHUNKS)} resume chunks. Embedding...")
-CHUNK_EMBEDDINGS = embedder.encode(CHUNKS, convert_to_numpy=True)
+CHUNK_EMBEDDINGS = np.array(list(embedder.embed(CHUNKS)))
 print("Ready.")
 
+# ── RAG retrieval ─────────────────────────────────────────────────────────────
 def retrieve_context(query: str, top_k: int = 3) -> str:
-    query_emb = embedder.encode([query], convert_to_numpy=True)
+    query_emb = np.array(list(embedder.embed([query])))
     norms = np.linalg.norm(CHUNK_EMBEDDINGS, axis=1) * np.linalg.norm(query_emb)
     norms = np.where(norms == 0, 1e-10, norms)
     sims  = (CHUNK_EMBEDDINGS @ query_emb.T).flatten() / norms
     top_idx = np.argsort(sims)[::-1][:top_k]
     return "\n\n".join(CHUNKS[i] for i in top_idx)
 
+# ── API models ────────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
     message: str
     history: list[dict] = []
@@ -61,6 +65,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
 
+# ── Routes ────────────────────────────────────────────────────────────────────
 @app.get("/")
 def root():
     return {"status": "ok", "model": OLLAMA_MODEL}
