@@ -13,8 +13,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pull model at BUILD time so startup is instant
-RUN ollama serve & sleep 5 && ollama pull tinyllama && kill %1
+# Pull model at build time using bash explicitly
+RUN bash -c "ollama serve & sleep 5 && ollama pull tinyllama; kill %1 || true"
 
 COPY . .
 RUN chmod +x start.sh
