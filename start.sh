@@ -14,5 +14,5 @@ for i in $(seq 1 20); do
   sleep 2
 done
 
-echo "==> Starting FastAPI..."
-uvicorn main:app --host 0.0.0.0 --port "${PORT:-8000}"
+echo "==> Starting FastAPI on 0.0.0.0:${PORT:-8000}..."
+exec uvicorn main:app --host 0.0.0.0 --port "${PORT:-8000}"
