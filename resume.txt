@@ -1,19 +1,72 @@
-REPLACE THIS WITH YOUR ACTUAL RESUME AS PLAIN TEXT
-
 Ishrak Latif
-ishrak.latif96@gmail.com
-github.com/ishraklatif
-linkedin.com/in/ishrak-latif-a79235212
++61-489-154-254 | ishrak10319@gmail.com | ishraklatif.github.io | github.com/ishraklatif
 
-EXPERIENCE
-Software Engineer — Dhaka National Medical Institute Hospital (2023–present)
-- ...
+INTRO
+Passionate AI Engineer and MSc Artificial Intelligence student at Monash University with hands-on experience in Natural Language Processing and Computer Vision. Skilled in developing and fine-tuning deep learning models using Hugging Face and integrating them into scalable pipelines. Driven by curiosity to bridge theory and practice through research-guided experimentation. Currently seeking a Summer 2025 AI internship to contribute to innovative projects while learning under experienced mentors in applied deep learning and multimodal AI.
+
+TECHNICAL EXPERTISE
+Languages: Python, C++, JavaScript, SQL
+Frameworks: Flask, Django
+Cloud: Azure (Azure Machine Learning, Azure Kubernetes Service, Azure Container Registry)
+
+PUBLIC PROJECTS
+
+RAG Pipeline | BERT Encoder
+- Built a Retrieval-Augmented Generation (RAG) system integrating Zephyr-7B and sentence-BERT embeddings to provide contextual document summarization.
+- The retriever achieved a Recall@5 of 0.82, indicating it successfully retrieved relevant biomedical passages in 82% of test queries.
+- Processed over 100K research abstracts from PubMed for biomedical question answering and semantic search.
+
+AI Surveillance | OpenCV
+- Designed and deployed a real-time video surveillance system with human detection accuracy of 94% at 20 FPS on live camera feeds.
+- Implemented OpenCV DNN for optimized frame processing, achieving 30% faster detection versus baseline SSD.
+- Successfully demonstrated at Bangladesh military R&D lab, earning A+ academic recognition and recommendation for national defense research adoption.
+
+Detect Handwritten Digits | Python, TensorFlow
+- Trained a fully connected neural network on 60,000 MNIST images, reaching 98.4% test accuracy after hyperparameter tuning.
+- Utilized Adam optimizer with sparse categorical crossentropy to achieve 30% faster convergence than baseline SGD.
+- Deployed model inference pipeline in TensorFlow for lightweight local prediction under 50ms latency per digit.
+
+Data Analysis on Football Data | Python, Matplotlib
+- Conducted statistical analysis on 10K+ Bundesliga match events, applying T-tests and Mann-Whitney U-tests to extract player performance patterns.
+- Created 15 Matplotlib visualizations (histograms, bar, scatter plots) revealing team consistency trends and match outcome correlations.
+- Findings improved data-driven decision making for predictive modelling of player form by 20% accuracy lift compared to simple averages.
+
+PROFESSIONAL EXPERIENCE
+
+Lieutenant | Bangladesh Army
+January 2016 – June 2021 | Bangladesh
+- Led 120+ personnel across artillery units as Command Post and Adjutant Officer, overseeing large-scale training operations and logistics coordination.
+- Improved battlefield communication efficiency by 2% by streamlining Gun Command Post data relay architecture and radio frequency management.
+- Conducted penetration testing and cybersecurity assessments for the Multi-Launch Rocket System (MLRS) fire-control networks, identifying and patching critical vulnerabilities in encrypted channels.
+- Optimized artillery maintenance workflow, reducing downtime of heavy vehicles and weapon systems.
+- Collaborated with the Brigade's G3 Ops section to digitize mission logs, enhancing after-action review turnaround.
+- Earned commendation for outstanding leadership and precision in operational planning during live-fire exercises.
+
+Senior Software Engineer | Aztech Valley Ltd
+September 2022 – July 2024 | Bangladesh
+- Developed and deployed an NLP-powered hospital emergency response platform used by 200+ staff members, enabling real-time triage recommendations and reducing average response time by 20%.
+- Built Retrieval-Augmented Generation (RAG) pipelines with BioMistral and PubMedBERT, improving medical query accuracy by 25% and shortening retrieval latency by 40% using optimized ChromaDB vector indexing.
+- Integrated PySpark pipelines for EHR preprocessing, supporting data throughput of 1.5M records/hour with distributed fault-tolerance on Azure.
+- Automated CI/CD workflows with Docker, Jenkins, and MLflow, reducing manual deployment effort by 60% across Kubernetes clusters.
+- Incorporated advanced visualization techniques with Matplotlib to create real-time dashboards for emergency response data.
+- Implemented GDPR-compliant data encryption and credential management using Azure Key Vault, ensuring 100% audit pass rate on security evaluations.
+
+Consultant Engineer | Dhaka National Medical Institute Hospital & BD Thai Ltd
+July 2023 – July 2024 | Bangladesh
+- Advised directors on AI-based medical technology acquisitions and software integrations, contributing to a 15% reduction in procurement cycle time.
+- Managed cross-vendor teams during calibration and setup of new hardware systems, ensuring zero downtime during deployment.
+- Designed and presented technical roadmaps to the Bangladesh Health Ministry, leading to successful approval and funding allocation for modernization projects.
 
 EDUCATION
-...
 
-SKILLS
-Python, PyTorch, FastAPI, Django, OpenCV, ...
+Bangladesh Military Academy
+Military Science | December 2018 | Chittagong, Bangladesh
 
-PROJECTS
-StockPred — TFT-based ASX stock forecasting pipeline ...
+Artillery Center and School
+Artillery Basic Course | February 2019 | Chittagong, Bangladesh
+
+Bangladesh University of Professionals
+Bachelor of Science in Computer Science and Engineering | January 2022 | Dhaka, Bangladesh
+
+Monash University
+Master of Science in Artificial Intelligence (ongoing) | Expected 2026 | Melbourne, Australia
