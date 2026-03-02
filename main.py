@@ -1,4 +1,5 @@
 import os
+import re
 import numpy as np
 import httpx
 from fastapi import FastAPI, HTTPException
@@ -17,9 +18,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-HF_TOKEN = os.environ["HF_TOKEN"]
-HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"
-HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}/v1/chat/completions"
+HF_TOKEN   = os.environ["HF_TOKEN"]
+HF_MODEL   = "meta-llama/Llama-3.1-8B-Instruct:novita"
+HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
+
 RESUME_PATH = Path(__file__).parent / "resume.txt"
 
 SYSTEM_PROMPT = """You are Ishrak's personal AI assistant on his portfolio website.
@@ -58,12 +60,6 @@ def retrieve_context(query: str, top_k: int = 3) -> str:
     sims  = (CHUNK_EMBEDDINGS @ query_emb.T).flatten() / norms
     top_idx = np.argsort(sims)[::-1][:top_k]
     return "\n\n".join(CHUNKS[i] for i in top_idx)
-
-# ── Strip DeepSeek think tags ─────────────────────────────────────────────────
-def clean_response(text: str) -> str:
-    import re
-    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
-    return text.strip()
 
 # ── API models ────────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
@@ -116,13 +112,10 @@ async def chat(req: ChatRequest):
         async with httpx.AsyncClient(timeout=60) as client:
             r = await client.post(HF_API_URL, json=payload, headers=headers)
             r.raise_for_status()
-            reply = r.json()["choices"][0]["message"]["content"]
-            reply = clean_response(reply)
+            reply = r.json()["choices"][0]["message"]["content"].strip()
     except httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="HuggingFace API timed out")
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"HuggingFace error: {str(e)}")
 
     return ChatResponse(reply=reply)
-
-
