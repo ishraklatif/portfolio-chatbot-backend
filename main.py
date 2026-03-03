@@ -19,12 +19,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-HF_TOKEN        = os.environ["HF_TOKEN"]
-HF_MODEL        = "meta-llama/Llama-3.1-8B-Instruct:novita"
-HF_CHAT_URL     = "https://router.huggingface.co/v1/chat/completions"
-HF_TXT2IMG_URL  = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-dev/v1/text-to-image"
-HF_IMG2IMG_URL  = "https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-refiner-1.0/v1/image-to-image"
-POLLINATIONS_URL = "https://image.pollinations.ai/prompt"
+HF_TOKEN       = os.environ["HF_TOKEN"]
+HF_MODEL       = "meta-llama/Llama-3.1-8B-Instruct:novita"
+HF_CHAT_URL    = "https://router.huggingface.co/v1/chat/completions"
+HF_IMG2IMG_URL = "https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-refiner-1.0/v1/image-to-image"
 
 RESUME_PATH = Path(__file__).parent / "resume.txt"
 
@@ -74,31 +72,21 @@ def retrieve_context(query: str, top_k: int = 3) -> str:
 def is_image_request(message: str) -> bool:
     return any(kw in message.lower() for kw in IMAGE_KEYWORDS)
 
-# ── Text to image: Pollinations (primary, no key) ─────────────────────────────
-async def text_to_image_pollinations(prompt: str) -> Optional[str]:
-    try:
-        encoded = prompt.replace(" ", "%20")
-        url = f"{POLLINATIONS_URL}/{encoded}?width=512&height=512&nologo=true"
-        async with httpx.AsyncClient(timeout=30) as client:
-            r = await client.get(url)
-            if r.status_code == 200 and "image" in r.headers.get("content-type", ""):
-                return "data:image/jpeg;base64," + base64.b64encode(r.content).decode()
-    except Exception as e:
-        print(f"Pollinations failed: {e}")
-    return None
-
-# ── Text to image: HuggingFace FLUX (fallback) ───────────────────────────────
-async def text_to_image_hf(prompt: str) -> Optional[str]:
-    try:
-        headers = {"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"}
-        payload = {"inputs": prompt, "parameters": {"width": 512, "height": 512}}
-        async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.post(HF_TXT2IMG_URL, json=payload, headers=headers)
-            if r.status_code == 200:
-                return "data:image/jpeg;base64," + base64.b64encode(r.content).decode()
-    except Exception as e:
-        print(f"HF text2img failed: {e}")
-    return None
+# ── Text to image: return Pollinations URL directly ───────────────────────────
+# Browser fetches it directly — avoids Fly.io Sydney geo-block (HTTP 530)
+def text_to_image_url(prompt: str) -> str:
+    # Strip common command words to get clean subject
+    clean = prompt.lower()
+    for kw in ["generate an image of", "generate image of", "generate a", "generate",
+                "create image of", "create an image of", "create a", "create",
+                "draw a", "draw an", "draw", "make a picture of", "make an image of",
+                "show me", "paint a", "paint", "illustrate", "render", "imagine"]:
+        clean = clean.replace(kw, "").strip()
+    clean = clean.strip(" .,?!")
+    if not clean:
+        clean = prompt
+    encoded = clean.replace(" ", "%20")
+    return f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&nologo=true&seed={abs(hash(prompt)) % 99999}"
 
 # ── Image to image: HuggingFace ───────────────────────────────────────────────
 async def image_to_image_hf(prompt: str, image_b64: str) -> Optional[str]:
@@ -114,6 +102,7 @@ async def image_to_image_hf(prompt: str, image_b64: str) -> Optional[str]:
             r = await client.post(HF_IMG2IMG_URL, json=payload, headers=headers)
             if r.status_code == 200:
                 return "data:image/jpeg;base64," + base64.b64encode(r.content).decode()
+            print(f"HF img2img status: {r.status_code} — {r.text[:200]}")
     except Exception as e:
         print(f"HF img2img failed: {e}")
     return None
@@ -126,8 +115,8 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     reply: str
-    image: Optional[str] = None
-    mode: str = "chat"  # "chat" | "text2img" | "img2img"
+    image: Optional[str] = None  # URL or base64
+    mode: str = "chat"           # "chat" | "text2img" | "img2img"
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.get("/")
@@ -148,16 +137,12 @@ async def chat(req: ChatRequest):
         result = await image_to_image_hf(req.message, req.image)
         if result:
             return ChatResponse(reply="Here's your transformed image!", image=result, mode="img2img")
-        return ChatResponse(reply="Image transformation failed. Try again.", mode="img2img")
+        return ChatResponse(reply="Image transformation failed — the HF model may be loading. Try again in 30s.", mode="img2img")
 
     # ── Text-to-image ──
     if is_image_request(req.message):
-        result = await text_to_image_pollinations(req.message)
-        if not result:
-            result = await text_to_image_hf(req.message)
-        if result:
-            return ChatResponse(reply="Here's your generated image!", image=result, mode="text2img")
-        return ChatResponse(reply="Image generation failed. Try again.", mode="text2img")
+        url = text_to_image_url(req.message)
+        return ChatResponse(reply="Here's your generated image!", image=url, mode="text2img")
 
     # ── Chat ──
     context = retrieve_context(req.message)
