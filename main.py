@@ -1,5 +1,5 @@
 import os
-import base64
+import re
 import numpy as np
 import httpx
 from fastapi import FastAPI, HTTPException
@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastembed import TextEmbedding
 from pathlib import Path
-from typing import Optional
 
 app = FastAPI(title="Ishrak's Portfolio Chatbot")
 
@@ -19,10 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-HF_TOKEN       = os.environ["HF_TOKEN"]
-HF_MODEL       = "meta-llama/Llama-3.1-8B-Instruct:novita"
-HF_CHAT_URL    = "https://router.huggingface.co/v1/chat/completions"
-HF_IMG2IMG_URL = "https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-refiner-1.0/v1/image-to-image"
+HF_TOKEN   = os.environ["HF_TOKEN"]
+HF_MODEL   = "meta-llama/Llama-3.1-8B-Instruct:novita"
+HF_API_URL = "https://router.huggingface.co/v1/chat/completions"
 
 RESUME_PATH = Path(__file__).parent / "resume.txt"
 
@@ -33,16 +31,10 @@ helpful AI assistant. Be friendly and professional. Keep responses concise (2-4 
 unless more is clearly needed). If asked something you don't know, say so honestly.
 """
 
-IMAGE_KEYWORDS = [
-    "generate", "create image", "draw", "make a picture", "make an image",
-    "show me", "paint", "illustrate", "render", "visualize", "depict",
-    "text to image", "imagine", "produce image", "create a photo", "generate image"
-]
-
 # ── Resume chunking ───────────────────────────────────────────────────────────
 def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list[str]:
     if not path.exists():
-        return ["Resume not loaded."]
+        return ["Resume not loaded. Please add resume.txt to the backend folder."]
     text = path.read_text(encoding="utf-8")
     words = text.split()
     chunks, i = [], 0
@@ -54,6 +46,7 @@ def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list
 # ── Embeddings ────────────────────────────────────────────────────────────────
 print("Loading embedding model...")
 embedder = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+
 CHUNKS = load_and_chunk(RESUME_PATH)
 print(f"Loaded {len(CHUNKS)} resume chunks. Embedding...")
 CHUNK_EMBEDDINGS = np.array(list(embedder.embed(CHUNKS)))
@@ -68,55 +61,13 @@ def retrieve_context(query: str, top_k: int = 3) -> str:
     top_idx = np.argsort(sims)[::-1][:top_k]
     return "\n\n".join(CHUNKS[i] for i in top_idx)
 
-# ── Intent detection ──────────────────────────────────────────────────────────
-def is_image_request(message: str) -> bool:
-    return any(kw in message.lower() for kw in IMAGE_KEYWORDS)
-
-# ── Text to image: return Pollinations URL directly ───────────────────────────
-# Browser fetches it directly — avoids Fly.io Sydney geo-block (HTTP 530)
-def text_to_image_url(prompt: str) -> str:
-    # Strip common command words to get clean subject
-    clean = prompt.lower()
-    for kw in ["generate an image of", "generate image of", "generate a", "generate",
-                "create image of", "create an image of", "create a", "create",
-                "draw a", "draw an", "draw", "make a picture of", "make an image of",
-                "show me", "paint a", "paint", "illustrate", "render", "imagine"]:
-        clean = clean.replace(kw, "").strip()
-    clean = clean.strip(" .,?!")
-    if not clean:
-        clean = prompt
-    encoded = clean.replace(" ", "%20")
-    return f"https://image.pollinations.ai/prompt/{encoded}?width=512&height=512&nologo=true&seed={abs(hash(prompt)) % 99999}"
-
-# ── Image to image: HuggingFace ───────────────────────────────────────────────
-async def image_to_image_hf(prompt: str, image_b64: str) -> Optional[str]:
-    try:
-        if "," in image_b64:
-            image_b64 = image_b64.split(",")[1]
-        headers = {"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"}
-        payload = {
-            "inputs": image_b64,
-            "parameters": {"prompt": prompt, "strength": 0.75, "num_inference_steps": 20}
-        }
-        async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.post(HF_IMG2IMG_URL, json=payload, headers=headers)
-            if r.status_code == 200:
-                return "data:image/jpeg;base64," + base64.b64encode(r.content).decode()
-            print(f"HF img2img status: {r.status_code} — {r.text[:200]}")
-    except Exception as e:
-        print(f"HF img2img failed: {e}")
-    return None
-
 # ── API models ────────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
     message: str
     history: list[dict] = []
-    image: Optional[str] = None  # base64 for img2img
 
 class ChatResponse(BaseModel):
     reply: str
-    image: Optional[str] = None  # URL or base64
-    mode: str = "chat"           # "chat" | "text2img" | "img2img"
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.get("/")
@@ -132,33 +83,34 @@ async def chat(req: ChatRequest):
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty")
 
-    # ── Image-to-image ──
-    if req.image and is_image_request(req.message):
-        result = await image_to_image_hf(req.message, req.image)
-        if result:
-            return ChatResponse(reply="Here's your transformed image!", image=result, mode="img2img")
-        return ChatResponse(reply="Image transformation failed — the HF model may be loading. Try again in 30s.", mode="img2img")
-
-    # ── Text-to-image ──
-    if is_image_request(req.message):
-        url = text_to_image_url(req.message)
-        return ChatResponse(reply="Here's your generated image!", image=url, mode="text2img")
-
-    # ── Chat ──
     context = retrieve_context(req.message)
+
     messages = [
-        {"role": "system", "content": f"{SYSTEM_PROMPT}\n\n--- Ishrak's Resume Context ---\n{context}\n---"}
+        {
+            "role": "system",
+            "content": f"{SYSTEM_PROMPT}\n\n--- Ishrak's Resume Context ---\n{context}\n---",
+        }
     ]
     for turn in req.history[-6:]:
         messages.append({"role": turn["role"], "content": turn["content"]})
     messages.append({"role": "user", "content": req.message})
 
-    payload = {"model": HF_MODEL, "messages": messages, "max_tokens": 512, "temperature": 0.7, "stream": False}
-    headers = {"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"}
+    payload = {
+        "model": HF_MODEL,
+        "messages": messages,
+        "max_tokens": 512,
+        "temperature": 0.7,
+        "stream": False,
+    }
+
+    headers = {
+        "Authorization": f"Bearer {HF_TOKEN}",
+        "Content-Type": "application/json",
+    }
 
     try:
         async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.post(HF_CHAT_URL, json=payload, headers=headers)
+            r = await client.post(HF_API_URL, json=payload, headers=headers)
             r.raise_for_status()
             reply = r.json()["choices"][0]["message"]["content"].strip()
     except httpx.TimeoutException:
@@ -166,4 +118,4 @@ async def chat(req: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"HuggingFace error: {str(e)}")
 
-    return ChatResponse(reply=reply, mode="chat")
+    return ChatResponse(reply=reply)
