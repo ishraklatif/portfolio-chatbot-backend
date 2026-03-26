@@ -1,72 +1,53 @@
 Ishrak Latif
-+61-489-154-254 | ishrak10319@gmail.com | ishraklatif.github.io | github.com/ishraklatif
++61-489-154-254 | ishrak10319@gmail.com | Portfolio: ishraklatif.github.io | github.com/ishraklatif
 
 INTRO
-Passionate AI Engineer and MSc Artificial Intelligence student at Monash University with hands-on experience in Natural Language Processing and Computer Vision. Skilled in developing and fine-tuning deep learning models using Hugging Face and integrating them into scalable pipelines. Driven by curiosity to bridge theory and practice through research-guided experimentation. Currently seeking a Summer 2025 AI internship to contribute to innovative projects while learning under experienced mentors in applied deep learning and multimodal AI.
+AI Engineer with 7+ years across applied ML, enterprise software, and senior leadership — now completing an MSc in Artificial Intelligence at Monash University (full-time, graduating 2026). Specialises in production NLP, RAG systems, and ML pipeline deployment at scale. Brings consulting experience advising health ministry stakeholders and a military background managing high-stakes operations — uniquely combining technical rigour with real-world leadership and client impact. Eligible to work in Australia without restriction.
 
 TECHNICAL EXPERTISE
-Languages: Python, C++, JavaScript, SQL
-Frameworks: Flask, Django
-Cloud: Azure (Azure Machine Learning, Azure Kubernetes Service, Azure Container Registry)
-
-PUBLIC PROJECTS
-
-RAG Pipeline | BERT Encoder
-- Built a Retrieval-Augmented Generation (RAG) system integrating Zephyr-7B and sentence-BERT embeddings to provide contextual document summarization.
-- The retriever achieved a Recall@5 of 0.82, indicating it successfully retrieved relevant biomedical passages in 82% of test queries.
-- Processed over 100K research abstracts from PubMed for biomedical question answering and semantic search.
-
-AI Surveillance | OpenCV
-- Designed and deployed a real-time video surveillance system with human detection accuracy of 94% at 20 FPS on live camera feeds.
-- Implemented OpenCV DNN for optimized frame processing, achieving 30% faster detection versus baseline SSD.
-- Successfully demonstrated at Bangladesh military R&D lab, earning A+ academic recognition and recommendation for national defense research adoption.
-
-Detect Handwritten Digits | Python, TensorFlow
-- Trained a fully connected neural network on 60,000 MNIST images, reaching 98.4% test accuracy after hyperparameter tuning.
-- Utilized Adam optimizer with sparse categorical crossentropy to achieve 30% faster convergence than baseline SGD.
-- Deployed model inference pipeline in TensorFlow for lightweight local prediction under 50ms latency per digit.
-
-Data Analysis on Football Data | Python, Matplotlib
-- Conducted statistical analysis on 10K+ Bundesliga match events, applying T-tests and Mann-Whitney U-tests to extract player performance patterns.
-- Created 15 Matplotlib visualizations (histograms, bar, scatter plots) revealing team consistency trends and match outcome correlations.
-- Findings improved data-driven decision making for predictive modelling of player form by 20% accuracy lift compared to simple averages.
+- LLM fine-tuning, RAG pipelines & vector search
+- ML system design & production deployment (Azure, Kubernetes)
+- NLP: BERT, HuggingFace, transformer architectures
+- Stakeholder advisory & technical roadmap delivery
+- AI risk, responsible AI, and GDPR/data governance
+- Python, PyTorch, LightGBM, FastAPI, PySpark, SQL, matplotlib
 
 PROFESSIONAL EXPERIENCE
 
-Lieutenant | Bangladesh Army
-January 2016 – June 2021 | Bangladesh
-- Led 120+ personnel across artillery units as Command Post and Adjutant Officer, overseeing large-scale training operations and logistics coordination.
-- Improved battlefield communication efficiency by 2% by streamlining Gun Command Post data relay architecture and radio frequency management.
-- Conducted penetration testing and cybersecurity assessments for the Multi-Launch Rocket System (MLRS) fire-control networks, identifying and patching critical vulnerabilities in encrypted channels.
-- Optimized artillery maintenance workflow, reducing downtime of heavy vehicles and weapon systems.
-- Collaborated with the Brigade's G3 Ops section to digitize mission logs, enhancing after-action review turnaround.
-- Earned commendation for outstanding leadership and precision in operational planning during live-fire exercises.
+Senior AI/ML Engineer | Aztech Valley Ltd, Bangladesh | Sep 2022 – Jul 2024
+- Architected and deployed a production NLP triage platform serving 200+ clinical staff, cutting average emergency response time by 20% — a direct patient-safety outcome.
+- Built RAG pipelines using BioMistral and PubMedBERT with ChromaDB vector indexing, improving medical query accuracy by 25% and reducing retrieval latency by 40%.
+- Engineered PySpark EHR preprocessing pipelines on Azure supporting 1.5M records/hour with distributed fault-tolerance, enabling reliable ML inference at enterprise scale.
+- Automated CI/CD across Kubernetes clusters (Docker, Jenkins, MLflow), cutting manual deployment effort by 60% and accelerating model iteration cycles.
+- Implemented GDPR-compliant data encryption using Azure Key Vault; achieved 100% audit pass rate across all security evaluations.
 
-Senior Software Engineer | Aztech Valley Ltd
-September 2022 – July 2024 | Bangladesh
-- Developed and deployed an NLP-powered hospital emergency response platform used by 200+ staff members, enabling real-time triage recommendations and reducing average response time by 20%.
-- Built Retrieval-Augmented Generation (RAG) pipelines with BioMistral and PubMedBERT, improving medical query accuracy by 25% and shortening retrieval latency by 40% using optimized ChromaDB vector indexing.
-- Integrated PySpark pipelines for EHR preprocessing, supporting data throughput of 1.5M records/hour with distributed fault-tolerance on Azure.
-- Automated CI/CD workflows with Docker, Jenkins, and MLflow, reducing manual deployment effort by 60% across Kubernetes clusters.
-- Incorporated advanced visualization techniques with Matplotlib to create real-time dashboards for emergency response data.
-- Implemented GDPR-compliant data encryption and credential management using Azure Key Vault, ensuring 100% audit pass rate on security evaluations.
+AI Consultant | Dhaka National Medical Institute Hospital & BD Thai Ltd, Bangladesh | Jul 2023 – Jul 2024
+- Advised hospital directors and government stakeholders on AI-based medical technology acquisitions, reducing procurement cycle time by 15%.
+- Designed and presented AI modernisation roadmaps to the Bangladesh Health Ministry; secured ministerial approval and funding allocation for a national hospital digitisation initiative.
+- Led cross-vendor integration teams during hardware deployment, coordinating technical and non-technical stakeholders with zero operational downtime.
 
-Consultant Engineer | Dhaka National Medical Institute Hospital & BD Thai Ltd
-July 2023 – July 2024 | Bangladesh
-- Advised directors on AI-based medical technology acquisitions and software integrations, contributing to a 15% reduction in procurement cycle time.
-- Managed cross-vendor teams during calibration and setup of new hardware systems, ensuring zero downtime during deployment.
-- Designed and presented technical roadmaps to the Bangladesh Health Ministry, leading to successful approval and funding allocation for modernization projects.
+Lieutenant (Cybersecurity & Operations) | Bangladesh Army, Bangladesh | Jan 2016 – Jun 2021
+- Led 120+ personnel in high-pressure operational environments, developing the command presence and structured decision-making relevant to leading client engagements.
+- Conducted penetration testing and cybersecurity assessments on MLRS fire-control networks; identified and patched critical encrypted-channel vulnerabilities under operational conditions.
+- Commended for precision in operational planning — consistently delivered outcomes on time in ambiguous, resource-constrained environments.
+
+PUBLIC PROJECTS
+
+Financial Market Forecasting — ASX Equity Return Forecasting | Python, LightGBM, PyTorch
+- Built a cross-sectional return forecasting system across the ASX 50 universe using a 260-feature panel (245,000+ samples, 2005–2026). Designed and evaluated 5 architectures; selected LightGBM after rigorously diagnosing deep learning generalisation failures across a structural market regime change.
+- Final model: Test IC = +0.054, ICIR = +0.314, annualised L/S Sharpe = +0.429 — outperforming all neural baselines on the held-out 2023–2026 test window.
+- Resolved T4 GPU OOM failure in TFT's Variable Selection Network (260 GRNs x 126 timesteps) by redesigning to a VSN-free linear encoder, reducing GPU memory ~6x while preserving the temporal attention stack.
+
+RAG Pipeline | Zephyr-7B, sentence-BERT, ChromaDB
+- Built a Retrieval-Augmented Generation system integrating Zephyr-7B and sentence-BERT embeddings to provide contextual document summarization.
+- The retriever achieved a Recall@5 of 0.82, indicating it successfully retrieved relevant biomedical passages in 82% of test queries.
+- Processed over 100K research abstracts from PubMed for biomedical question answering and semantic search.
+
+Question Classifier — BERT Prefix Tuning & Transformer NLP | Python, PyTorch, HuggingFace, FastAPI, React
+- Built a full-stack NLP classifier (6 TREC categories) comparing a custom Transformer encoder against BERT prefix tuning. Prefix tuning achieved 94%+ accuracy while training fewer than 1% of total BERT parameters — demonstrating parameter-efficient fine-tuning at minimal compute cost. Served via containerised FastAPI + React.
 
 EDUCATION
 
-Bangladesh Military Academy
-Military Science | December 2018 | Chittagong, Bangladesh
-
-Artillery Center and School
-Artillery Basic Course | February 2019 | Chittagong, Bangladesh
-
-Bangladesh University of Professionals
-Bachelor of Science in Computer Science and Engineering | January 2022 | Dhaka, Bangladesh
-
-Monash University
-Master of Science in Artificial Intelligence (ongoing) | Expected 2026 | Melbourne, Australia
+Monash University | Master of Science in Artificial Intelligence (Full-time) | Expected 2026 | Melbourne, Australia
+Bangladesh University of Professionals | BSc Computer Science & Engineering | Jan 2022 | Dhaka, Bangladesh
+Bangladesh Military Academy | Military Science | Dec 2018 | Chittagong, Bangladesh
