@@ -5,7 +5,7 @@ INTRO
 AI Engineer with 7+ years across applied ML, enterprise software, and senior leadership — now completing an MSc in Artificial Intelligence at Monash University (full-time, graduating 2026). Specialises in production NLP, RAG systems, and ML pipeline deployment at scale. Brings consulting experience advising health ministry stakeholders and a military background managing high-stakes operations — uniquely combining technical rigour with real-world leadership and client impact. Eligible to work in Australia without restriction.
 
 TECHNICAL EXPERTISE
-- LLM fine-tuning, RAG pipelines & vector search
+- LLM fine-tuning, RAG pipelines & vector search-LangChain, LangGraph
 - ML system design & production deployment (Azure, Kubernetes)
 - NLP: BERT, HuggingFace, transformer architectures
 - Stakeholder advisory & technical roadmap delivery
@@ -38,7 +38,7 @@ Financial Market Forecasting — ASX Equity Return Forecasting | Python, LightGB
 - Final model: Test IC = +0.054, ICIR = +0.314, annualised L/S Sharpe = +0.429 — outperforming all neural baselines on the held-out 2023–2026 test window.
 - Resolved T4 GPU OOM failure in TFT's Variable Selection Network (260 GRNs x 126 timesteps) by redesigning to a VSN-free linear encoder, reducing GPU memory ~6x while preserving the temporal attention stack.
 
-RAG Pipeline | Zephyr-7B, sentence-BERT, ChromaDB
+RAG Pipeline | Zephyr-7B, sentence-BERT, ChromaDB, LangChain
 - Built a Retrieval-Augmented Generation system integrating Zephyr-7B and sentence-BERT embeddings to provide contextual document summarization.
 - The retriever achieved a Recall@5 of 0.82, indicating it successfully retrieved relevant biomedical passages in 82% of test queries.
 - Processed over 100K research abstracts from PubMed for biomedical question answering and semantic search.
