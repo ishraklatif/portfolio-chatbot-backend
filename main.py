@@ -32,10 +32,10 @@ BLOG_PASSWORD = os.environ["BLOG_PASSWORD"]
 RESUME_PATH = Path(__file__).parent / "resume.txt"
 
 SYSTEM_PROMPT = """You are Ishrak's personal AI assistant on his portfolio website.
-You have access to his resume as context. Answer questions about his skills, experience,
-projects, and background accurately and concisely. For general questions answer like a
-helpful AI assistant. Be friendly and professional. Keep responses concise (2-4 sentences
-unless more is clearly needed). If asked something you don't know, say so honestly.
+You have access to his resume and blog posts as context. Answer questions about his skills,
+experience, projects, background, and writing accurately and concisely. For general questions
+answer like a helpful AI assistant. Be friendly and professional. Keep responses concise
+(2-4 sentences unless more is clearly needed). If asked something you don't know, say so honestly.
 """
 
 # ── Resume chunking ───────────────────────────────────────────────────────────
@@ -50,12 +50,44 @@ def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list
         i += chunk_size - overlap
     return chunks
 
+# ── Blog post fetching ────────────────────────────────────────────────────────
+def fetch_blog_chunks() -> list[str]:
+    try:
+        import httpx as _httpx
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+        }
+        r = _httpx.get(
+            f"{SUPABASE_URL}/rest/v1/posts",
+            headers=headers,
+            params={"published": "eq.true", "select": "title,content,category,tags,created_at"}
+        )
+        posts = r.json()
+        chunks = []
+        for post in posts:
+            tags = ", ".join(post.get("tags") or [])
+            text = f"[Blog Post] {post['title']}\nCategory: {post['category']}\nTags: {tags}\n\n{post['content']}"
+            # chunk long posts
+            words = text.split()
+            i = 0
+            while i < len(words):
+                chunks.append(" ".join(words[i : i + 300]))
+                i += 250
+        print(f"Loaded {len(posts)} blog posts → {len(chunks)} chunks.")
+        return chunks
+    except Exception as e:
+        print(f"Blog fetch failed: {e}")
+        return []
+
 # ── Embeddings ────────────────────────────────────────────────────────────────
 print("Loading embedding model...")
 embedder = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
-CHUNKS = load_and_chunk(RESUME_PATH)
-print(f"Loaded {len(CHUNKS)} resume chunks. Embedding...")
+resume_chunks = load_and_chunk(RESUME_PATH)
+blog_chunks   = fetch_blog_chunks()
+CHUNKS = resume_chunks + blog_chunks
+print(f"Total chunks: {len(CHUNKS)} ({len(resume_chunks)} resume + {len(blog_chunks)} blog). Embedding...")
 CHUNK_EMBEDDINGS = np.array(list(embedder.embed(CHUNKS)))
 print("Ready.")
 
@@ -117,6 +149,18 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok", "model": HF_MODEL}
+
+@app.post("/reload")
+async def reload_chunks(x_blog_password: str = Header(...)):
+    """Reload blog chunks from Supabase without redeploying."""
+    global CHUNKS, CHUNK_EMBEDDINGS
+    if x_blog_password != BLOG_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid password")
+    resume_chunks = load_and_chunk(RESUME_PATH)
+    blog_chunks   = fetch_blog_chunks()
+    CHUNKS = resume_chunks + blog_chunks
+    CHUNK_EMBEDDINGS = np.array(list(embedder.embed(CHUNKS)))
+    return {"status": "reloaded", "total_chunks": len(CHUNKS), "blog_chunks": len(blog_chunks)}
 
 # ── Routes: chat ──────────────────────────────────────────────────────────────
 @app.post("/chat", response_model=ChatResponse)
