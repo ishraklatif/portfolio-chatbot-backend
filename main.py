@@ -53,22 +53,22 @@ def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list
 # ── Blog post fetching ────────────────────────────────────────────────────────
 def fetch_blog_chunks() -> list[str]:
     try:
-        import httpx as _httpx
-        headers = {
+        import urllib.request, urllib.parse, json as _json
+        params = urllib.parse.urlencode({
+            "published": "eq.true",
+            "select": "title,content,category,tags,created_at"
+        })
+        url = f"{SUPABASE_URL}/rest/v1/posts?{params}"
+        req = urllib.request.Request(url, headers={
             "apikey": SUPABASE_KEY,
             "Authorization": f"Bearer {SUPABASE_KEY}",
-        }
-        r = _httpx.get(
-            f"{SUPABASE_URL}/rest/v1/posts",
-            headers=headers,
-            params={"published": "eq.true", "select": "title,content,category,tags,created_at"}
-        )
-        posts = r.json()
+        })
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            posts = _json.loads(resp.read().decode())
         chunks = []
         for post in posts:
             tags = ", ".join(post.get("tags") or [])
             text = f"[Blog Post] {post['title']}\nCategory: {post['category']}\nTags: {tags}\n\n{post['content']}"
-            # chunk long posts
             words = text.split()
             i = 0
             while i < len(words):
