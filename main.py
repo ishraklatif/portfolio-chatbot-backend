@@ -65,7 +65,11 @@ def fetch_blog_chunks() -> list[str]:
         })
         with urllib.request.urlopen(req, timeout=10) as resp:
             posts = _json.loads(resp.read().decode())
-        chunks = []
+        # Add a summary chunk listing all titles so the chatbot can answer listing questions
+        titles = [p["title"] for p in posts]
+        summary = "Ishrak has written the following blog posts:\n" + "\n".join(f"- {t}" for t in titles)
+        chunks = [summary]
+
         for post in posts:
             tags = ", ".join(post.get("tags") or [])
             text = f"[Blog Post] {post['title']}\nCategory: {post['category']}\nTags: {tags}\n\n{post['content']}"
