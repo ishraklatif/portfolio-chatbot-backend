@@ -46,7 +46,8 @@ def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list
     words = text.split()
     chunks, i = [], 0
     while i < len(words):
-        chunks.append(" ".join(words[i : i + chunk_size]))
+        chunk_text = f"[From blog post: {post['title']}] " + " ".join(words[i : i + 300])
+        chunks.append(chunk_text)
         i += chunk_size - overlap
     return chunks
 
@@ -65,19 +66,24 @@ def fetch_blog_chunks() -> list[str]:
         })
         with urllib.request.urlopen(req, timeout=10) as resp:
             posts = _json.loads(resp.read().decode())
-        # Add a summary chunk listing all titles so the chatbot can answer listing questions
+
+        # Summary chunk listing all titles
         titles = [p["title"] for p in posts]
         summary = "Ishrak has written the following blog posts:\n" + "\n".join(f"- {t}" for t in titles)
         chunks = [summary]
 
         for post in posts:
             tags = ", ".join(post.get("tags") or [])
-            text = f"[Blog Post] {post['title']}\nCategory: {post['category']}\nTags: {tags}\n\n{post['content']}"
-            words = text.split()
+            header = f"[Blog Post] {post['title']}\nCategory: {post['category']}\nTags: {tags}\n\n"
+            body = post['content']
+            words = body.split()
             i = 0
             while i < len(words):
-                chunks.append(" ".join(words[i : i + 300]))
+                chunk_body = " ".join(words[i : i + 300])
+                # Prepend title to every chunk so retrieval can match on post name
+                chunks.append(f"[From blog post: {post['title']}]\n{header}{chunk_body}")
                 i += 250
+
         print(f"Loaded {len(posts)} blog posts → {len(chunks)} chunks.")
         return chunks
     except Exception as e:
@@ -96,7 +102,7 @@ CHUNK_EMBEDDINGS = np.array(list(embedder.embed(CHUNKS)))
 print("Ready.")
 
 # ── RAG retrieval ─────────────────────────────────────────────────────────────
-def retrieve_context(query: str, top_k: int = 3) -> str:
+def retrieve_context(query: str, top_k: int = 5) -> str:
     query_emb = np.array(list(embedder.embed([query])))
     norms = np.linalg.norm(CHUNK_EMBEDDINGS, axis=1) * np.linalg.norm(query_emb)
     norms = np.where(norms == 0, 1e-10, norms)
@@ -299,3 +305,6 @@ async def update_post(post_id: str, post: PostUpdate):
         if r.status_code not in (200, 204):
             raise HTTPException(status_code=502, detail="Failed to update post")
         return {"status": "updated"}
+
+       
+        
