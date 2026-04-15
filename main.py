@@ -46,8 +46,7 @@ def load_and_chunk(path: Path, chunk_size: int = 300, overlap: int = 50) -> list
     words = text.split()
     chunks, i = [], 0
     while i < len(words):
-        chunk_text = f"[From blog post: {post['title']}] " + " ".join(words[i : i + 300])
-        chunks.append(chunk_text)
+        chunks.append(" ".join(words[i : i + chunk_size]))
         i += chunk_size - overlap
     return chunks
 
@@ -305,6 +304,3 @@ async def update_post(post_id: str, post: PostUpdate):
         if r.status_code not in (200, 204):
             raise HTTPException(status_code=502, detail="Failed to update post")
         return {"status": "updated"}
-
-       
-        
