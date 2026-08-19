@@ -1,0 +1,100 @@
+Ishrak Latif
++61-489-154-254 | ishrak.latif96@gmail.com | Portfolio: ishraklatif.github.io | github.com/ishraklatif
+
+INTRO
+AI/ML Engineer with 7+ years across production ML systems, NLP pipelines, and edge AI — completing an MSc in Artificial Intelligence at Monash University (graduating 2026). Specialises in RAG system design, LLM evaluation, and ML deployment across cloud and edge. Active researcher with Monash VISTA on low-power edge AI hardware for smart city and environmental monitoring applications. Combines deep technical delivery with stakeholder advisory experience at government and enterprise level. Eligible to work in Australia without restriction.
+
+TECHNICAL SKILLS
+
+RAG & Retrieval: Hybrid BM25+FAISS, fastembed, ChromaDB, Azure AI Search (hybrid + RRF fusion), CrossEncoder reranking, LLM-as-Judge, Cohen's kappa
+
+LLMs & Fine-tuning: LoRA/PEFT (T5, GPT-2), HuggingFace Transformers, Groq API, Ollama, LangChain, LangGraph, prompt engineering, query rewriting
+
+Edge AI & CV: YOLOv8 (distillation, ONNX export), OpenVINO, NNCF INT8 quantisation, ByteTrack/BoT-SORT, Raspberry Pi 5, Jetson Orin Nano, Intel NUC (CPU/iGPU inference)
+
+ML & Data: PyTorch, scikit-learn, LightGBM, MLflow, PySpark, numpy, pandas, GRU/seq2seq, Random Forest
+
+Deployment & Infra: FastAPI, Docker, Kubernetes, Fly.io, AWS EC2, Azure (AKS, Key Vault, AI Search, Azure ML), Supabase, PostgreSQL, CI/CD (GitHub Actions, Jenkins)
+
+Languages: Python, SQL, JavaScript, Bash
+
+RESEARCH EXPERIENCE
+
+AI Research Engineer | Monash VISTA, Monash University | Melbourne, AU | Aug 2025 – Present
+
+EdgeSight Project:
+- Contributing to EdgeSight — a low-power edge AI hardware platform for running vision ML/DL models and small language models entirely on-device across 5 field pilots: smart cities, water/stormwater, bushfire, smart transportation, and healthcare.
+- Synthesized a 10-phase project execution plan (Hardware, Software, Business & Admin tracks) spanning architecture through field pilot deployment, consolidating the official roadmap and supplementary research brief.
+- Evaluated edge compute platforms (NVIDIA Jetson Orin Nano 8GB, Raspberry Pi 5 + Hailo-8L, Rockchip RK3588, Intel N-series/Lunar Lake) against power envelope, NPU throughput, and PyTorch/ONNX deployment criteria for off-grid solar vs mains-powered profiles.
+- Designed a model compression pipeline: teacher-student knowledge distillation (YOLOv8m/l to YOLOv8n-class student), exported via PyTorch to ONNX to OpenVINO, quantised to INT8 with NNCF, benchmarked for latency/accuracy tradeoffs across CPU and iGPU.
+- Assessed in-hand prototype hardware (Intel NUC10i7FNH, Comet Lake, no NPU) against project power constraints; designed a fallback CPU/iGPU inference strategy with OpenVINO.
+- Produced hardware spec sheets, risk register, and solar/battery power budget calculations for cross-functional team alignment.
+
+Capy RAG Project:
+- Developing Capy — a RAG-powered AI education chatbot with a capybara persona for high school students (ages 14-18) covering 8 AI/ML topics: what is AI/ML, neural networks, LLMs, AI in daily life, careers, ethics, AI vs ML vs deep learning, and getting started.
+- Implemented hybrid BM25+dense retrieval with CrossEncoder reranking; structured JSON responses (answer, emotion, fun_fact) to support a future video/audio avatar phase without touching RAG logic.
+- Notebook version (Groq API): query rewriting, few-shot prompted generation, LLM-as-Judge evaluation with self + cross-model judging and Cohen's kappa vs human scores.
+- Persona tuned for teen relatability: self-aware capybara humor, sparse current slang (capped at 1-2 per response), platform-relevant analogies (For You page, Discord, gaming).
+
+PROFESSIONAL EXPERIENCE
+
+Senior AI/ML Engineer | Aztech Valley Ltd | Bangladesh | Sep 2022 – Jul 2024
+- Architected and deployed a production NLP triage platform serving 200+ clinical staff, cutting average emergency response time by 20% — a direct patient-safety outcome.
+- Built RAG pipelines using BioMistral and PubMedBERT with ChromaDB vector indexing, improving medical query accuracy by 25% and reducing retrieval latency by 40%.
+- Engineered PySpark EHR preprocessing pipelines on Azure supporting 1.5M records/hour with distributed fault-tolerance, enabling reliable ML inference at enterprise scale.
+- Automated CI/CD across Kubernetes clusters (Docker, Jenkins, MLflow), cutting manual deployment effort by 60% and accelerating model iteration cycles.
+- Implemented GDPR-compliant data encryption using Azure Key Vault; achieved 100% audit pass rate across all security evaluations.
+
+AI Consultant | Dhaka National Medical Institute Hospital & BD Thai Ltd | Bangladesh | Jul 2023 – Jul 2024
+- Advised hospital directors and government stakeholders on AI-based medical technology acquisitions, reducing procurement cycle time by 15%.
+- Designed and presented AI modernisation roadmaps to the Bangladesh Health Ministry; secured ministerial approval and funding allocation for a national hospital digitisation initiative.
+- Led cross-vendor integration teams during hardware deployment, coordinating technical and non-technical stakeholders with zero operational downtime.
+
+Lieutenant (Cybersecurity & Operations) | Bangladesh Army | Bangladesh | Jan 2016 – Jun 2021
+- Led 120+ personnel in high-pressure operational environments, developing command presence and structured decision-making.
+- Conducted penetration testing and cybersecurity assessments on MLRS fire-control networks; identified and patched critical encrypted-channel vulnerabilities under operational conditions.
+- Commended for precision in operational planning — consistently delivered outcomes on time in ambiguous, resource-constrained environments.
+
+PROJECTS
+
+Capy RAG — AI Education Chatbot | Python, BM25, FAISS, Ollama, Groq, LLM-as-Judge
+- Built a RAG-powered AI-education chatbot (capybara persona) for high school students covering 8 AI/ML topics.
+- Hybrid BM25+dense retrieval with CrossEncoder reranking; structured JSON responses (answer, emotion, fun_fact).
+- LLM-as-Judge evaluation with self + cross-model judging and Cohen's kappa vs human scores.
+
+Portfolio Chatbot — RAG Backend | FastAPI, fastembed, Supabase, Fly.io, HuggingFace
+- Built and deployed a production RAG chatbot backend on Fly.io serving ishraklatif.github.io.
+- Retrieves context from resume + blog posts (Supabase) using BAAI/bge-small-en-v1.5 embeddings.
+- Blog system with admin CRUD panel; /reload endpoint refreshes RAG index without redeployment.
+- LLaMA-3.1-8B via HuggingFace router for generation.
+
+EdgeSight Edge AI Platform | YOLOv8, ONNX, OpenVINO, NNCF, Jetson Orin Nano
+- Designed knowledge distillation pipeline (YOLOv8m to YOLOv8n), ONNX to OpenVINO export, INT8 quantisation with NNCF.
+- Evaluated hardware platforms for off-grid solar deployment; produced power budget calculations and technical documentation for a 5-pilot field deployment roadmap.
+
+ASX Equity Return Forecasting | Python, LightGBM, PyTorch
+- Cross-sectional return forecasting across ASX 50 with a 260-feature panel (245K+ samples, 2005-2026).
+- Test IC = +0.054, ICIR = +0.314, annualised L/S Sharpe = +0.429 — outperforming all neural baselines.
+- Resolved T4 GPU OOM in TFT's Variable Selection Network by redesigning to a VSN-free linear encoder, reducing GPU memory ~6x while preserving the temporal attention stack.
+
+RAG Pipeline | Zephyr-7B, sentence-BERT, ChromaDB, LangChain
+- Built a Retrieval-Augmented Generation system integrating Zephyr-7B and sentence-BERT embeddings.
+- Retriever achieved Recall@5 of 0.82 on biomedical passages. Processed 100K+ PubMed abstracts.
+
+NLP Question Classifier | Python, PyTorch, HuggingFace, FastAPI, React
+- Full-stack NLP classifier (6 TREC categories) comparing custom Transformer encoder vs BERT prefix tuning.
+- Prefix tuning achieved 94%+ accuracy training fewer than 1% of total BERT parameters.
+
+EDUCATION
+
+Monash University | Master of Science in Artificial Intelligence (Full-time) | Expected 2026 | Melbourne, Australia
+- Key coursework: NLP, Computer Vision, Multi-Agent Systems, Planning & Automated Reasoning, Applied ML.
+- Capstone: Calmer Commute — sensory-aware navigation app for Melbourne CBD; AI/ML owner (crowd forecasting, route scoring, AWS EC2 deployment).
+
+Bangladesh University of Professionals | BSc Computer Science & Engineering | Jan 2022 | Dhaka, Bangladesh
+Bangladesh Military Academy | Military Science | Dec 2018 | Chittagong, Bangladesh
+
+BLOG POSTS
+- RAG vs Long Context Windows: Which Architecture Should You Use for LLM Applications?
+- A2A vs MCP: How AI Agents Communicate With Each Other, Tools, and Data
+- Ollama vs vLLM: Choosing Your LLM Inference Engine
