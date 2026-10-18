@@ -1,10 +1,12 @@
 import os
 import re
 import uuid
+import html
 import numpy as np
 import httpx
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastembed import TextEmbedding
 from pathlib import Path
@@ -215,6 +217,43 @@ async def chat(req: ChatRequest):
     return ChatResponse(reply=reply)
 
 # ── Routes: blog ──────────────────────────────────────────────────────────────
+@app.get("/preview/{slug}", response_class=HTMLResponse)
+async def post_preview(slug: str):
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            f"{SUPABASE_URL}/rest/v1/posts",
+            headers=sb_headers(),
+            params={"slug": f"eq.{slug}", "published": "eq.true"}
+        )
+        if r.status_code != 200 or not r.json():
+            raise HTTPException(status_code=404, detail="Post not found")
+        post = r.json()[0]
+
+    title = html.escape(post["title"])
+    description = html.escape(post.get("excerpt") or post["content"][:160])
+    url = html.escape(f"https://ishraklatif.github.io/post.html?slug={slug}")
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{title}</title>
+  <meta name="description" content="{description}">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{description}">
+  <meta property="og:url" content="{url}">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Ishrak Latif">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{title}">
+  <meta name="twitter:description" content="{description}">
+  <meta http-equiv="refresh" content="0;url={url}">
+</head>
+<body>
+  <p>Redirecting to <a href="{url}">{title}</a>...</p>
+</body>
+</html>"""
+
 @app.get("/posts")
 async def get_posts():
     async with httpx.AsyncClient() as client:
